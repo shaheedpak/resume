@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A0E1A">
+<meta name="description" content="Aamir Niazi — Cyber Security Executive / CISO. Interactive career dashboard: 19+ years, quant fund to media, built ground-up security programs.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Aamir Niazi — Career Operations Center (CISO)">
+<meta property="og:description" content="Interactive résumé dashboard: 18-year trajectory from the SOC floor to the boardroom. Click to explore.">
+</head>
+<body style="margin:0">
+<title>Aamir Niazi — Career Operations Center</title>
+
+<style>
+  #ac-root{
+    /* ---- SOC (dark) palette : default ---- */
+    --ink:#0A0E1A; --ink-2:#0C1120; --panel:#111827; --panel-2:#0E1424;
+    --line:#212B45; --line-soft:#18213A;
+    --text:#D6DCE8; --muted:#8B98B4; --faint:#5C688A; --strong:#FFFFFF;
+    --brass:#D9A441; --brass-hi:#E8C06A; --brass-dim:#7C5F27;
+    --teal:#3FBFA9; --cyan:#5B8DEF; --coral:#E2725B;
+    --net-line:91,141,239; --net-dot:217,164,65;
+    --bg-glow-1:rgba(217,164,65,.06); --bg-glow-2:rgba(63,191,169,.05);
+
+    --serif:'Palatino Linotype','Book Antiqua',Palatino,'Iowan Old Style',Georgia,serif;
+    --sans:system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,'Cascadia Code','Cascadia Mono','Segoe UI Mono',Consolas,Menlo,monospace;
+    --maxw:1160px;
+
+    position:relative;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, var(--bg-glow-1), transparent 60%),
+      radial-gradient(900px 500px at 0% 110%, var(--bg-glow-2), transparent 55%),
+      var(--ink);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+    transition:background .5s ease,color .5s ease;
+  }
+  /* ---- Boardroom (light) palette ---- */
+  #ac-root[data-theme="boardroom"]{
+    --ink:#EDF1F8; --ink-2:#FFFFFF; --panel:#FFFFFF; --panel-2:#F6F8FC;
+    --line:#DCE2EE; --line-soft:#E7ECF5;
+    --text:#28304A; --muted:#5A6480; --faint:#8891A8; --strong:#111A30;
+    --brass:#9A6C1B; --brass-hi:#7C5614; --brass-dim:#C8AE7A;
+    --teal:#12796A; --cyan:#2C5AC0; --coral:#C0503B;
+    --net-line:44,90,192; --net-dot:154,108,27;
+    --bg-glow-1:rgba(154,108,27,.05); --bg-glow-2:rgba(18,121,106,.05);
+  }
+
+  *{box-sizing:border-box}
+
+  #ac-bg{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.55;pointer-events:none}
+
+  /* scroll progress + control bar */
+  #ac-prog{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--brass),var(--teal));z-index:60;transition:width .1s linear}
+  .ac-controls{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:calc(16px + env(safe-area-inset-right,0px));z-index:61;display:flex;gap:8px}
+  .ac-controls button{
+    font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+    color:var(--text);background:var(--panel);border:1px solid var(--line);
+    border-radius:100px;padding:8px 13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;min-height:38px;
+    transition:border-color .2s,color .2s,background .2s;backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent;
+  }
+  .ac-controls button:hover{border-color:var(--brass);color:var(--brass-hi)}
+  .ac-controls button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+  .ac-controls .sw{width:9px;height:9px;border-radius:50%;background:var(--brass)}
+
+  .ac-wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 clamp(18px,4vw,40px)}
+
+  .mono{font-family:var(--mono)}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--brass);display:inline-flex;align-items:center;gap:.6em;margin:0}
+  .eyebrow::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--brass),transparent)}
+  h1,h2,h3{font-family:var(--serif);font-weight:600;text-wrap:balance;margin:0;letter-spacing:.005em}
+
+  /* HERO */
+  .hero{padding:clamp(64px,9vh,116px) 0 40px}
+  .status{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);border:1px solid rgba(63,191,169,.28);background:rgba(63,191,169,.06);padding:6px 12px;border-radius:100px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(63,191,169,.5)}70%{box-shadow:0 0 0 9px rgba(63,191,169,0)}100%{box-shadow:0 0 0 0 rgba(63,191,169,0)}}
+  .hero h1{font-size:clamp(44px,8.5vw,92px);line-height:.98;margin:22px 0 0;letter-spacing:-.01em;color:var(--strong)}
+  .hero h1 .sub{display:block;font-family:var(--mono);font-weight:400;font-size:clamp(13px,1.8vw,17px);letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-top:20px}
+  .thesis{font-family:var(--serif);font-size:clamp(19px,2.6vw,27px);line-height:1.42;color:var(--strong);max-width:24ch;margin:26px 0 0}
+  .thesis em{color:var(--brass);font-style:italic}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:26px;font-family:var(--mono);font-size:12.5px;color:var(--faint);letter-spacing:.04em}
+  .hero-meta span{display:inline-flex;align-items:center;gap:7px}
+  .hero-meta b{color:var(--brass);font-weight:400}
+
+  /* KPIs */
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:44px}
+  .kpi{background:linear-gradient(180deg,var(--panel),var(--panel-2));padding:22px 20px 20px;position:relative}
+  .kpi::after{content:"";position:absolute;left:20px;top:0;width:26px;height:2px;background:var(--brass)}
+  .kpi .num{font-family:var(--serif);font-size:clamp(30px,4.4vw,46px);line-height:1;color:var(--strong);font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:2px}
+  .kpi .num .u{font-size:.5em;color:var(--brass);font-family:var(--mono);font-weight:400}
+  .kpi .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-top:12px;line-height:1.35}
+
+  section{padding:clamp(54px,9vh,96px) 0;border-top:1px solid var(--line-soft)}
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:34px}
+  .sec-head h2{font-size:clamp(26px,4vw,40px);line-height:1.05;color:var(--strong)}
+  .sec-head p{margin:10px 0 0;color:var(--muted);max-width:54ch;font-size:15px}
+  .sec-idx{font-family:var(--mono);font-size:12px;color:var(--brass-dim);letter-spacing:.2em}
+
+  /* TRAJECTORY CHART */
+  .traj{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:16px;padding:20px 16px 8px;margin-bottom:26px}
+  .traj-cap{display:flex;justify-content:space-between;align-items:center;padding:0 8px 6px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+  svg#chart{width:100%;height:auto;display:block;touch-action:manipulation}
+  .traj-area{fill:url(#trajGrad);opacity:.5}
+  .traj-line{fill:none;stroke:var(--brass);stroke-width:2}
+  .traj-grid{stroke:var(--line-soft);stroke-width:1}
+  .traj-dot{fill:var(--panel);stroke:var(--faint);stroke-width:2;transition:r .2s,stroke .2s,fill .2s;pointer-events:none}
+  .traj-dot.active{fill:var(--brass);stroke:var(--brass-hi)}
+  .traj-hit{fill:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .traj-hit:hover + .traj-dot,.traj-hit:focus-visible + .traj-dot{stroke:var(--brass)}
+  .traj-hit:focus-visible{outline:2px solid var(--brass)}
+  .traj-year{fill:var(--faint);font-family:var(--mono);text-anchor:middle}
+  .traj-alab{fill:var(--strong);font-family:var(--serif);text-anchor:middle}
+  .traj-ylab{fill:var(--faint);font-family:var(--mono)}
+
+  /* TIMELINE */
+  .ops{display:grid;grid-template-columns:300px 1fr;gap:30px;align-items:start}
+  .track{position:relative;display:flex;flex-direction:column;gap:6px}
+  .track::before{content:"";position:absolute;left:11px;top:14px;bottom:14px;width:1px;background:linear-gradient(180deg,var(--brass),var(--line) 30%,var(--line))}
+  .node{display:flex;gap:16px;align-items:flex-start;background:none;border:none;color:inherit;text-align:left;cursor:pointer;padding:12px;border-radius:10px;position:relative;width:100%;transition:background .2s;font-family:inherit}
+  .node:hover{background:rgba(127,127,127,.06)}
+  .node .pip{flex:none;width:23px;height:23px;border-radius:50%;border:1px solid var(--line);background:var(--ink-2);display:grid;place-items:center;margin-top:2px;transition:all .25s;z-index:1}
+  .node .pip::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--faint);transition:all .25s}
+  .node .r-org{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .node .r-role{font-family:var(--serif);font-size:16px;color:var(--text);margin-top:3px;line-height:1.25;display:block}
+  .node .r-when{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:5px;display:block}
+  .node[aria-selected="true"]{background:linear-gradient(90deg,rgba(217,164,65,.10),transparent)}
+  .node[aria-selected="true"] .pip{border-color:var(--brass);box-shadow:0 0 0 4px rgba(217,164,65,.12)}
+  .node[aria-selected="true"] .pip::after{background:var(--brass);width:9px;height:9px}
+  .node[aria-selected="true"] .r-role{color:var(--strong)}
+  .node:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+  .briefing{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:16px;padding:clamp(24px,3vw,38px);min-height:380px;position:relative;overflow:hidden}
+  .briefing::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(217,164,65,.05),transparent 40%);pointer-events:none}
+  .b-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+  .b-tag{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);border:1px solid rgba(63,191,169,.25);padding:5px 10px;border-radius:6px;white-space:nowrap}
+  .b-org{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass)}
+  .briefing h3{font-size:clamp(24px,3.4vw,34px);margin:10px 0 4px;color:var(--strong);line-height:1.1}
+  .b-when{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+  .b-lead{color:var(--text);font-size:15.5px;margin:18px 0 22px;max-width:62ch}
+  .b-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+  .b-list li{position:relative;padding-left:26px;color:var(--text);font-size:14.5px;max-width:66ch}
+  .b-list li::before{content:"→";position:absolute;left:0;top:0;color:var(--brass);font-family:var(--mono)}
+  .b-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .b-chips span{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--muted);border:1px solid var(--line);border-radius:100px;padding:4px 11px;background:var(--ink-2)}
+  .fade{animation:fade .4s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* DOMAINS */
+  .grid-d{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .dcard{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:14px;padding:24px 22px;transition:border-color .25s,transform .25s}
+  .dcard:hover{border-color:var(--brass-dim);transform:translateY(-3px)}
+  .dcard .gi{font-family:var(--mono);font-size:12px;color:var(--brass);letter-spacing:.1em}
+  .dcard h3{font-size:19px;margin:12px 0 8px;color:var(--strong)}
+  .dcard p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.55}
+  .dcard .stack{margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.03em;line-height:1.7}
+
+  /* CREDENTIALS */
+  .creds{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+  .cred{display:flex;gap:14px;align-items:center;background:var(--panel-2);border:1px solid var(--line);border-left:2px solid var(--brass);border-radius:10px;padding:15px 16px}
+  .cred .code{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--brass-hi);letter-spacing:.02em;white-space:nowrap}
+  .cred .full{font-size:12.5px;color:var(--muted);line-height:1.35}
+
+  /* ARSENAL */
+  .ars-search{margin-bottom:20px;position:relative;max-width:340px}
+  .ars-search input{width:100%;font-family:var(--mono);font-size:13px;color:var(--text);background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:11px 14px 11px 34px;letter-spacing:.03em}
+  .ars-search input:focus{outline:none;border-color:var(--brass)}
+  .ars-search::before{content:"⌕";position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--faint);font-size:15px}
+  .arsenal{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px}
+  .arow .cat{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);margin-bottom:12px;display:block}
+  .arow.hide{display:none}
+  .tags{display:flex;flex-wrap:wrap;gap:7px}
+  .tags span{font-size:12.5px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:5px 10px;transition:all .2s}
+  .tags span.hit{border-color:var(--brass);color:var(--brass-hi);background:rgba(217,164,65,.08)}
+  .tags span.dim{opacity:.28}
+  .ars-empty{color:var(--faint);font-family:var(--mono);font-size:13px;display:none}
+
+  /* EDUCATION */
+  .edu{display:grid;gap:0}
+  .erow{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:baseline;padding:20px 0;border-bottom:1px solid var(--line-soft)}
+  .erow:last-child{border-bottom:none}
+  .erow .deg{font-family:var(--serif);font-size:19px;color:var(--strong)}
+  .erow .sch{font-size:13.5px;color:var(--muted);margin-top:4px}
+  .erow .loc{font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;text-align:right;white-space:nowrap}
+
+  /* FOOTER */
+  .foot{border-top:1px solid var(--line);padding:44px 0 40px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-end}
+  .foot .cta{font-family:var(--serif);font-size:clamp(22px,3vw,30px);color:var(--strong);line-height:1.2;max-width:20ch}
+  .foot a{color:var(--brass);text-decoration:none;border-bottom:1px solid var(--brass-dim)}
+  .foot a:hover{color:var(--brass-hi)}
+  .contact{display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.03em}
+  .note{margin-top:24px;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.04em;max-width:70ch;line-height:1.6;padding-bottom:44px}
+
+  @media (max-width:860px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .kpi:last-child{grid-column:1/-1}
+    .ops{grid-template-columns:1fr}
+    .track{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:6px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+    .track::before{display:none}
+    .node{flex-direction:column;min-width:170px;gap:8px;scroll-snap-align:start}
+    .grid-d{grid-template-columns:1fr}
+    .sec-head{margin-bottom:26px}
+    .sec-idx{display:none}
+  }
+  @media (max-width:520px){
+    .ac-wrap{padding:0 16px}
+    .hero{padding-top:78px}
+    .hero h1{font-size:clamp(36px,12vw,52px)}
+    .kpis{grid-template-columns:1fr 1fr}
+    .kpi{padding:18px 15px 15px}
+    .kpi .num{font-size:27px}
+    .arsenal{grid-template-columns:1fr}
+    .ars-search{max-width:none}
+    .foot{gap:20px}
+    .ac-controls button#printBtn{padding:8px 11px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  @media print{#ac-bg,#ac-prog,.ac-controls{display:none!important}#ac-root{overflow:visible}}
+</style>
+
+<div id="ac-root" data-theme="soc">
+  <canvas id="ac-bg" aria-hidden="true"></canvas>
+  <div id="ac-prog" aria-hidden="true"></div>
+  <div class="ac-controls">
+    <button id="themeBtn" aria-label="Toggle SOC / Boardroom view"><span class="sw"></span><span id="themeTxt">SOC MODE</span></button>
+    <button id="printBtn" aria-label="Print or save as PDF">⎙ PDF</button>
+  </div>
+
+  <div class="ac-wrap">
+
+    <header class="hero">
+      <span class="status"><span class="dot"></span>System Operational · CISO on watch</span>
+      <h1>Aamir Niazi<span class="sub">Cyber Security Executive · Chief Information Security Officer</span></h1>
+      <p class="thesis">Two decades spent <em>translating technical risk into boardroom lingua franca</em> — and defending everything on the other side of that sentence.</p>
+      <div class="hero-meta">
+        <span><b>◈</b> Central New Jersey</span>
+        <span><b>◈</b> Quant Fund · Financial Services · Media</span>
+        <span><b>◈</b> CISSP · CCSP · CMU-Certified CISO</span>
+      </div>
+
+      <div class="kpis" id="kpis">
+        <div class="kpi"><div class="num" data-to="19"><span class="v">0</span><span class="u">+ yrs</span></div><div class="lbl">Progressive security leadership</div></div>
+        <div class="kpi"><div class="num" data-to="20"><span class="v">0</span><span class="u">+</span></div><div class="lbl">Engineers &amp; analysts led</div></div>
+        <div class="kpi"><div class="num" data-to="3"><span class="u">$</span><span class="v">0</span><span class="u">M+</span></div><div class="lbl">Security budget owned</div></div>
+        <div class="kpi"><div class="num" data-to="27"><span class="v">0</span><span class="u">%</span></div><div class="lbl">MTTD / MTTR reduction</div></div>
+        <div class="kpi"><div class="num" data-to="4"><span class="v">0</span></div><div class="lbl">Federal regulators faced &amp; cleared</div></div>
+      </div>
+    </header>
+
+    <section>
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">Career Operations Log</span>
+          <h2>Eighteen years climbing from the SOC floor to the boardroom.</h2>
+          <p>Click a point on the trajectory — or a posting below — to open its briefing. Use ↑ ↓ arrows to step through.</p>
+        </div>
+        <span class="sec-idx">01 / TRACE</span>
+      </div>
+
+      <div class="traj">
+        <div class="traj-cap"><span>Leadership Scope · 2007 → 2026</span><span id="trajNow">Engineers Gate · CISO</span></div>
+        <svg id="chart" role="img" aria-label="Interactive career trajectory chart"></svg>
+      </div>
+
+      <div class="ops">
+        <div class="track" id="track" role="tablist" aria-label="Career timeline" tabindex="0"></div>
+        <div class="briefing" id="briefing" role="tabpanel" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">Defense in Depth</span>
+          <h2>Domains under command.</h2>
+          <p>A program built from the ground up — every layer owned, staffed, and measured.</p>
+        </div>
+        <span class="sec-idx">02 / SURFACE</span>
+      </div>
+      <div class="grid-d" id="domains"></div>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">Command Credentials</span>
+          <h2>Certified where it counts.</h2>
+          <p>Executive leadership training paired with deep technical certification.</p>
+        </div>
+        <span class="sec-idx">03 / CLEARANCE</span>
+      </div>
+      <div class="creds" id="creds"></div>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">Technology Arsenal</span>
+          <h2>Hands on the tooling, not just the org chart.</h2>
+          <p>Two decades across the security, cloud, and delivery stack. Search to filter.</p>
+        </div>
+        <span class="sec-idx">04 / STACK</span>
+      </div>
+      <div class="ars-search"><input id="arsInput" type="text" placeholder="search the arsenal…" aria-label="Search technologies" autocomplete="off"></div>
+      <div class="arsenal" id="arsenal"></div>
+      <div class="ars-empty" id="arsEmpty">// no matching tooling found</div>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">Formation</span>
+          <h2>Academic foundation.</h2>
+          <p>From computer science fundamentals to executive management of technology in financial services.</p>
+        </div>
+        <span class="sec-idx">05 / ORIGIN</span>
+      </div>
+      <div class="edu" id="edu"></div>
+    </section>
+
+    <footer class="foot">
+      <div class="cta">Ready to brief your board on Monday.</div>
+      <div class="contact">
+        <span>◈ aamir niazi</span>
+        <a href="https://www.linkedin.com/in/aniazi/">***LinkedIn***</a>
+      </div>
+    </footer>
+    <p class="note">Interactive résumé dashboard generated from source résumé. Content reflects the candidate's stated experience. The "Leadership Scope" trajectory is a qualitative visualization of role seniority over time, not a quantitative metric.</p>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var roles = [
+    {org:"Engineers Gate",role:"Chief Information Security Officer",when:"Nov 2025 — Present",tag:"CURRENT POSTING",year:2025,scope:6,
+      lead:"Founding CISO of a quant fund — building a resilient, cloud-native cyber program from the ground up.",
+      points:[
+        "Building a 2-year strategy roadmap from internal & external assessments — technology and control gaps, human capital, and policy creation.",
+        "Baselining maturity through a self-assessment against CRI / NIST CSF.",
+        "Formalizing quarterly Executive & Board cyber-risk reporting via a new Cyber Risk Forum.",
+        "Acting as key stakeholder in securely enabling the business to innovate, with robust third-party due diligence.",
+        "Reducing attack surface with cloud-native controls: vuln scanning & patch automation, secure SDLC, CSPM maturity, and zero-trust identity."
+      ],
+      chips:["Founding CISO","Cloud-Native","Zero Trust","Board Risk Forum","Quant Fund"]},
+
+    {org:"SMBC Capital Markets",role:"Executive Director / CISO",when:"Jul 2022 — Oct 2025",tag:"EXECUTIVE DIRECTOR",year:2022,scope:6,
+      lead:"Promoted to own firm-wide cyber strategy and operations, aligned to the parent company's Target Operating Model.",
+      points:[
+        "Set the 3-year cyber strategy with C-level leadership; faced CFTC, NFA, FINRA & FRB across multiple regulatory audits.",
+        "Built the program and the team from the ground up against CRI, FFIEC, NIST CSF & CIS controls.",
+        "Led IAM, Vulnerability Management, Incident Response, and Security Operations & Engineering — staff and budget upwards of $3MM.",
+        "Matured cloud security across AWS & Azure and deployed a best-in-class CSPM solution.",
+        "Stood up an AI-risk Center of Excellence using NIST guidance, OWASP AI Top 10 and Databricks DASF."
+      ],
+      chips:["Regulatory Defense","Cloud Security","AI Risk COE","$3MM Budget","Program Build"]},
+
+    {org:"SMBC Capital Markets",role:"Director — Head of Cyber Defense & Information Risk",when:"Aug 2019 — Jun 2022",tag:"BOARD ADVISORY",year:2019,scope:5,
+      lead:"Technical advisory and business leadership advising senior management and the Board on strategic cyber initiatives.",
+      points:[
+        "Presented the firm's threat landscape, control-testing results, and mitigation plans to C-level executives and the Board of Directors.",
+        "Built, led and managed a team of 20 engineers defending the firm's information assets.",
+        "Owned Vulnerability Management, Incident Response, Security Engineering & Architecture, SecOps, Cloud, IAM and Governance.",
+        "Led the firm-wide SSDLC initiative, integrating secure coding with existing CI/CD tooling."
+      ],
+      chips:["Board Reporting","Team of 20","SSDLC","Governance"]},
+
+    {org:"KPMG LLP",role:"Manager — Information Security & Risk",when:"May 2016 — Jul 2019",tag:"GLOBAL CONSULTING",year:2016,scope:4,
+      lead:"Led security engineers across security operations and architecture, driving firm-wide initiatives globally.",
+      points:[
+        "Delivered global initiatives ranging from $500K to multi-million dollars.",
+        "Ran end-to-end security & risk reviews for internal apps and IaaS/PaaS/SaaS on Azure & AWS.",
+        "Led a team of incident handlers hunting anomalies across the firm using industry-standard and open-source tooling.",
+        "Automated security assessments through the GRC platform and ran firm-wide phishing simulations."
+      ],
+      chips:["AppSec Reviews","Threat Hunting","GRC Automation","Multi-Cloud"]},
+
+    {org:"CLS Bank International",role:"Vice President, Information Security",when:"Oct 2013 — Apr 2016",tag:"CRITICAL INFRASTRUCTURE",year:2013,scope:4,
+      lead:"Owned the bank's global security posture and the full portfolio of security tooling.",
+      points:[
+        "Architected globally dispersed solutions on cloud services (Azure & AWS).",
+        "Built the Threat Intelligence program feeding actionable intel directly into Incident Response.",
+        "Served as senior Incident Response lead across all severity levels.",
+        "Ran Qualys-driven vulnerability management against a risk matrix and hardened OS baselines (Windows, RHEL, Ubuntu, AIX)."
+      ],
+      chips:["Threat Intel","Incident Response","Endpoint & DLP","Vuln Mgmt"]},
+
+    {org:"NBC Universal",role:"Sr. Information Security Engineer",when:"Jun 2007 — Sep 2013",tag:"WHERE IT STARTED",year:2007,scope:2,
+      lead:"Designed and built a state-of-the-art 24x7 Security Operations Center from scratch.",
+      points:[
+        "Cut MTTD / MTTR by 27% with real-time monitoring feeding live dashboards.",
+        "Deployed a portfolio of tools, processes & controls to harden NBCU's global environment — securing major worldwide events, including the Olympics.",
+        "Performed incident analysis as senior team-lead for the incident response team.",
+        "Helped set the 3-year cyber strategy roadmap, working directly with the CISO."
+      ],
+      chips:["SOC Build","27% Faster IR","Olympics-Scale","Strategy Roadmap"]}
+  ];
+
+  var domains=[
+    {gi:"//01",t:"Cloud & Multi-Cloud Security",p:"Globally dispersed, scalable, cloud-native architectures secured across AWS and Azure, backed by best-in-class CSPM.",s:"AWS · Azure · CSPM · IaaC · Terraform"},
+    {gi:"//02",t:"GRC & Regulatory Compliance",p:"Policies, standards and controls libraries built to satisfy CRI, FFIEC, NIST CSF, CIS and federal examiners.",s:"NIST CSF · CIS · FFIEC · ISO 27001 · SOC 2"},
+    {gi:"//03",t:"Identity, Access & Zero Trust",p:"Enterprise IAM and privileged access engineered toward zero-trust and least-privilege.",s:"CyberArk · IAM · Zero Trust · PAM"},
+    {gi:"//04",t:"SecOps & Threat Detection",p:"24x7 SOC design with SIEM, copilot-driven automation and threat-informed defense.",s:"Sentinel · QRadar · Cribl · Threat Intel"},
+    {gi:"//05",t:"AppSec & SSDLC",p:"Secure SDLC on GitHub Enterprise and CI/CD, integrating SAST, DAST and SCA end to end.",s:"SAST · DAST · SCA · CI/CD · DevSecOps"},
+    {gi:"//06",t:"AI / LLM Security",p:"Stood up an AI-risk COE governing AI, LLM and agentic systems against emerging frameworks.",s:"NIST AI RMF · OWASP AI Top 10 · DASF"}
+  ];
+
+  var creds=[
+    {code:"CMU CISO",full:"Carnegie Mellon University CISO Program"},
+    {code:"CISSP",full:"Certified Information Systems Security Professional"},
+    {code:"CCSP",full:"Certified Cloud Security Professional"},
+    {code:"GSTRT",full:"GIAC Strategic Planning, Policy & Leadership"},
+    {code:"GCIH",full:"GIAC Certified Incident Handler"},
+    {code:"GCCC",full:"GIAC Critical Security Controls"},
+    {code:"GDSA",full:"GIAC Defensible Security Architecture"},
+    {code:"GCSA",full:"GIAC Cloud Security Automation"},
+    {code:"AWS",full:"Architecture, DevOps, SysOps & Security Eng. Training"}
+  ];
+
+  var arsenal=[
+    {cat:"SIEM & Detection",items:["Microsoft Sentinel","IBM QRadar","ArcSight","AlienVault","Cribl","DarkTrace"]},
+    {cat:"Endpoint & EDR",items:["CrowdStrike Falcon","Carbon Black","CyberReason","FireEye","Mandiant IR","OSSEC HIDS"]},
+    {cat:"Identity & Data",items:["CyberArk PAM","Varonis","Digital Guardian DLP","Websense Triton","Imperva WAF"]},
+    {cat:"Vuln & Risk",items:["Tenable","Qualys","Rapid7 Nexpose","Nessus","BitSight","Archer RM"]},
+    {cat:"Cloud & IaaC",items:["AWS","Azure","Terraform","CloudFormation","GitHub Enterprise"]},
+    {cat:"AppSec & CI/CD",items:["Fortify SCA","WhiteSource","SonarSource","Jenkins","Ansible","Sonatype"]}
+  ];
+
+  var edu=[
+    {deg:"Chief Information Security Officer Program",sch:"Carnegie Mellon University",loc:"Pittsburgh, PA"},
+    {deg:"Executive M.S., Management of Technology in Financial Services",sch:"Polytechnic Institute of New York University",loc:"New York, NY"},
+    {deg:"M.S., Information Systems Security Management",sch:"Colorado Technical University",loc:"Colorado Springs, CO"},
+    {deg:"B.A., Computer Science",sch:"Hunter College, CUNY",loc:"New York, NY"}
+  ];
+
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+  function $(id){return document.getElementById(id);}
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+  var current=0, root=$("ac-root");
+
+  /* ---- timeline list ---- */
+  var track=$("track"), briefing=$("briefing");
+  roles.forEach(function(r,i){
+    var b=document.createElement("button");
+    b.className="node";b.setAttribute("role","tab");b.dataset.i=i;
+    b.setAttribute("aria-selected",i===0?"true":"false");
+    b.innerHTML='<span class="pip"></span><span><span class="r-org">'+esc(r.org)+'</span><span class="r-role">'+esc(r.role)+'</span><span class="r-when">'+esc(r.when)+'</span></span>';
+    b.addEventListener("click",function(){select(i);});
+    track.appendChild(b);
+  });
+  track.addEventListener("keydown",function(e){
+    if(e.key==="ArrowDown"||e.key==="ArrowRight"){e.preventDefault();select(Math.min(current+1,roles.length-1));}
+    else if(e.key==="ArrowUp"||e.key==="ArrowLeft"){e.preventDefault();select(Math.max(current-1,0));}
+  });
+
+  function select(i){
+    current=i;var r=roles[i];
+    Array.prototype.forEach.call(track.children,function(n,j){n.setAttribute("aria-selected",j===i?"true":"false");});
+    var li=r.points.map(function(p){return "<li>"+esc(p)+"</li>";}).join("");
+    var ch=r.chips.map(function(c){return "<span>"+esc(c)+"</span>";}).join("");
+    briefing.innerHTML='<div class="fade"><div class="b-top"><span class="b-org">'+esc(r.org)+'</span><span class="b-tag">'+esc(r.tag)+'</span></div><h3>'+esc(r.role)+'</h3><div class="b-when">'+esc(r.when)+'</div><p class="b-lead">'+esc(r.lead)+'</p><ul class="b-list">'+li+'</ul><div class="b-chips">'+ch+'</div></div>';
+    $("trajNow").textContent=r.org+" · "+r.role.replace(/—.*/,"").trim();
+    updateChartActive(i);
+  }
+
+  /* ---- trajectory chart (SVG, responsive) ---- */
+  var svg=$("chart"),SVGNS="http://www.w3.org/2000/svg";
+  var chrono=roles.slice().reverse();               // oldest -> newest
+  var scopes=chrono.map(function(r){return r.scope;});
+  var minS=Math.min.apply(null,scopes)-.6, maxS=Math.max.apply(null,scopes)+.4;
+  var scopeNames={2:"Sr. Engineer",4:"VP / Manager",5:"Director",6:"CISO"};
+  var D;
+  function dims(){
+    return (root.clientWidth<620)
+      ? {VW:560,VH:450,padL:78,padR:34,padT:46,padB:74,dotR:11,hitR:38,yr:20,al:26,yl:16,lw:3}
+      : {VW:1000,VH:320,padL:64,padR:44,padT:34,padB:64,dotR:7,hitR:22,yr:13,al:18,yl:12,lw:2};
+  }
+  function cx(i){return D.padL+(i/(chrono.length-1))*(D.VW-D.padL-D.padR);}
+  function cy(s){return D.padT+(1-(s-minS)/(maxS-minS))*(D.VH-D.padT-D.padB);}
+
+  function buildChart(){
+    D=dims();
+    svg.innerHTML="";
+    svg.setAttribute("viewBox","0 0 "+D.VW+" "+D.VH);
+    var defs=document.createElementNS(SVGNS,"defs");
+    defs.innerHTML='<linearGradient id="trajGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--brass)" stop-opacity="0.28"/><stop offset="1" stop-color="var(--brass)" stop-opacity="0"/></linearGradient>';
+    svg.appendChild(defs);
+
+    Object.keys(scopeNames).forEach(function(k){
+      var y=cy(+k);
+      var ln=document.createElementNS(SVGNS,"line");
+      ln.setAttribute("x1",D.padL);ln.setAttribute("x2",D.VW-D.padR);ln.setAttribute("y1",y);ln.setAttribute("y2",y);
+      ln.setAttribute("class","traj-grid");svg.appendChild(ln);
+      var t=document.createElementNS(SVGNS,"text");
+      t.setAttribute("x",6);t.setAttribute("y",y-6);t.setAttribute("class","traj-ylab");t.setAttribute("font-size",D.yl);
+      t.textContent=scopeNames[k];svg.appendChild(t);
+    });
+
+    var d="",da="M"+cx(0)+" "+(D.VH-D.padB)+" ";
+    chrono.forEach(function(r,i){var x=cx(i),y=cy(r.scope);d+=(i?"L":"M")+x+" "+y+" ";da+="L"+x+" "+y+" ";});
+    da+="L"+cx(chrono.length-1)+" "+(D.VH-D.padB)+" Z";
+    var area=document.createElementNS(SVGNS,"path");area.setAttribute("d",da);area.setAttribute("class","traj-area");svg.appendChild(area);
+    var line=document.createElementNS(SVGNS,"path");line.setAttribute("d",d.trim());line.setAttribute("class","traj-line");line.setAttribute("stroke-width",D.lw);svg.appendChild(line);
+    var alab=document.createElementNS(SVGNS,"text");alab.setAttribute("class","traj-alab");alab.id="trajAlab";alab.setAttribute("font-size",D.al);svg.appendChild(alab);
+
+    chrono.forEach(function(r,i){
+      var x=cx(i),y=cy(r.scope), roleIdx=roles.length-1-i;
+      var yr=document.createElementNS(SVGNS,"text");
+      yr.setAttribute("x",x);yr.setAttribute("y",D.VH-D.padB+D.yr+10);yr.setAttribute("class","traj-year");yr.setAttribute("font-size",D.yr);
+      yr.textContent=r.year;svg.appendChild(yr);
+      // finger-friendly transparent hit target (handles pointer + keyboard); visual dot follows as sibling
+      var hit=document.createElementNS(SVGNS,"circle");
+      hit.setAttribute("cx",x);hit.setAttribute("cy",y);hit.setAttribute("r",D.hitR);
+      hit.setAttribute("class","traj-hit");hit.setAttribute("tabindex","0");
+      hit.setAttribute("role","button");hit.setAttribute("aria-label",r.year+" — "+r.org+", "+r.role);
+      var ttl=document.createElementNS(SVGNS,"title");ttl.textContent=r.org+" · "+r.role;hit.appendChild(ttl);
+      hit.addEventListener("click",function(){select(roleIdx);});
+      hit.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();select(roleIdx);}});
+      svg.appendChild(hit);
+      var c=document.createElementNS(SVGNS,"circle");
+      c.setAttribute("cx",x);c.setAttribute("cy",y);c.setAttribute("r",D.dotR);
+      c.setAttribute("class","traj-dot");c.dataset.role=roleIdx;svg.appendChild(c);
+    });
+    updateChartActive(current);
+  }
+  function updateChartActive(roleIdx){
+    Array.prototype.forEach.call(svg.querySelectorAll(".traj-dot"),function(d){
+      var on=(+d.dataset.role===roleIdx);
+      d.classList.toggle("active",on);d.setAttribute("r",on?D.dotR+3:D.dotR);
+      if(on){var lab=$("trajAlab");var x=+d.getAttribute("cx"),y=+d.getAttribute("cy");
+        lab.setAttribute("x",Math.max(D.padL+30,Math.min(D.VW-D.padR-30,x)));
+        lab.setAttribute("y",y-D.dotR-12);lab.textContent=roles[roleIdx].org;}
+    });
+  }
+  buildChart();
+  var wasMob=root.clientWidth<620, crt;
+  window.addEventListener("resize",function(){
+    clearTimeout(crt);
+    crt=setTimeout(function(){var m=root.clientWidth<620;if(m!==wasMob){wasMob=m;buildChart();}},200);
+  });
+
+  /* ---- render static sections ---- */
+  $("domains").innerHTML=domains.map(function(d){return '<div class="dcard"><span class="gi">'+esc(d.gi)+'</span><h3>'+esc(d.t)+'</h3><p>'+esc(d.p)+'</p><div class="stack">'+esc(d.s)+'</div></div>';}).join("");
+  $("creds").innerHTML=creds.map(function(c){return '<div class="cred"><span class="code">'+esc(c.code)+'</span><span class="full">'+esc(c.full)+'</span></div>';}).join("");
+  $("arsenal").innerHTML=arsenal.map(function(a){return '<div class="arow"><span class="cat">'+esc(a.cat)+'</span><div class="tags">'+a.items.map(function(t){return '<span data-t="'+esc(t.toLowerCase())+'">'+esc(t)+'</span>';}).join("")+'</div></div>';}).join("");
+  $("edu").innerHTML=edu.map(function(e){return '<div class="erow"><div><div class="deg">'+esc(e.deg)+'</div><div class="sch">'+esc(e.sch)+'</div></div><div class="loc">'+esc(e.loc)+'</div></div>';}).join("");
+
+  select(0);
+
+  /* ---- arsenal search ---- */
+  var arsInput=$("arsInput");
+  arsInput.addEventListener("input",function(){
+    var q=arsInput.value.trim().toLowerCase(),any=false;
+    Array.prototype.forEach.call(document.querySelectorAll("#arsenal .arow"),function(row){
+      var rowHit=false;
+      Array.prototype.forEach.call(row.querySelectorAll("span[data-t]"),function(sp){
+        var hit=q&&sp.dataset.t.indexOf(q)>-1;
+        sp.classList.toggle("hit",!!hit);
+        sp.classList.toggle("dim",!!q&&!hit);
+        if(hit)rowHit=true;
+      });
+      if(!q){row.classList.remove("hide");any=true;}
+      else{row.classList.toggle("hide",!rowHit);if(rowHit)any=true;}
+    });
+    $("arsEmpty").style.display=(q&&!any)?"block":"none";
+  });
+
+  /* ---- theme toggle ---- */
+  var theme="soc";
+  $("themeBtn").addEventListener("click",function(){
+    theme=(theme==="soc")?"boardroom":"soc";
+    root.setAttribute("data-theme",theme);
+    $("themeTxt").textContent=(theme==="soc")?"SOC MODE":"BOARDROOM";
+  });
+
+  /* ---- print ---- */
+  $("printBtn").addEventListener("click",function(){window.print();});
+
+  /* ---- scroll progress ---- */
+  var prog=$("ac-prog");
+  function onScroll(){
+    var h=document.documentElement,max=(h.scrollHeight-h.clientHeight)||1;
+    prog.style.width=(Math.min(h.scrollTop/max,1)*100)+"%";
+  }
+  window.addEventListener("scroll",onScroll,{passive:true});onScroll();
+
+  /* ---- KPI count-up ---- */
+  function countUp(el){
+    var to=+el.dataset.to,v=el.querySelector(".v");
+    if(reduce){v.textContent=to;return;}
+    var start=null;
+    function step(ts){if(!start)start=ts;var p=Math.min((ts-start)/1100,1),e=1-Math.pow(1-p,3);v.textContent=Math.round(to*e);if(p<1)requestAnimationFrame(step);}
+    requestAnimationFrame(step);
+  }
+  var kpiEls=document.querySelectorAll("#kpis .num");
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){countUp(x.target);io.unobserve(x.target);}});},{threshold:.5});
+    kpiEls.forEach(function(el){io.observe(el);});
+  }else{kpiEls.forEach(countUp);}
+
+  /* ---- ambient canvas ---- */
+  var cv=$("ac-bg"),ctx=cv&&cv.getContext&&cv.getContext("2d");
+  if(ctx&&!reduce){
+    var W,H,dpr=Math.min(window.devicePixelRatio||1,2),nodes=[];
+    function css(v){return getComputedStyle(root).getPropertyValue(v).trim();}
+    function resize(){
+      W=root.clientWidth;H=root.clientHeight;
+      cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+"px";cv.style.height=H+"px";ctx.setTransform(dpr,0,0,dpr,0,0);
+      nodes=[];var n=Math.min(46,Math.floor(W*H/26000));
+      for(var i=0;i<n;i++)nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18});
+    }
+    function frame(){
+      var lc=css("--net-line")||"91,141,239", dc=css("--net-dot")||"217,164,65";
+      ctx.clearRect(0,0,W,H);
+      for(var i=0;i<nodes.length;i++){var a=nodes[i];a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1;
+        for(var j=i+1;j<nodes.length;j++){var b=nodes[j],dx=a.x-b.x,dy=a.y-b.y,d=dx*dx+dy*dy;
+          if(d<20000){var o=(1-d/20000)*.3;ctx.strokeStyle="rgba("+lc+","+o+")";ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}}
+      for(var k=0;k<nodes.length;k++){ctx.fillStyle="rgba("+dc+",.5)";ctx.beginPath();ctx.arc(nodes[k].x,nodes[k].y,1.3,0,6.28);ctx.fill();}
+      requestAnimationFrame(frame);
+    }
+    var rt;window.addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(resize,180);});
+    resize();frame();
+  }
+})();
+</script>
+</body>
+</html>
